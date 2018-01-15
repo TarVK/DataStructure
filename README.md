@@ -7,15 +7,15 @@ This can be used in libraries to make sure users are inputting the required type
 The DataStructure class should be initialised with an object as the first and only argument.
 This object will be the structure object that will be used to validate other variables.
 The following fields are allowed:
-Field Name | Type | Description
----------- | ---- | -----------
-name | "Field Name" | Name of field if field of object
-type | structure | Type of variable (string, class or structure), may also be an array of options.
-fields | \[structure] | The fields that an object should have if the type is object (recursive structure)
-childType | structure | The type that any field not defined in fields may have (recursive structure)
-default | {} | The default value if the value is left out
-validate | function(val, path){} | A validation function that should return an error string if val is invalid
-init | function(val, path){} | A function to transform the received data to a other type
+| Field Name | Type | Description |
+| --- | --- | --- |
+| name | "Field Name" | Name of field if field of object |
+| type | structure | Type of variable (string, class or structure), may also be an array of options. |
+| fields | \[structure] | The fields that an object should have if the type is object (recursive structure) |
+| childType | structure | The type that any field not defined in fields may have (recursive structure) |
+| default | {} | The default value if the value is left out |
+| validate | function(val, path){} | A validation function that should return an error string if val is invalid |
+| init | function(val, path){} | A function to transform the received data to a other type |
 In this table, the word structure represents an object containing the contents of the table itself, or a string or class specifying a simple variable type.
 
 Example:
