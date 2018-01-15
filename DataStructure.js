@@ -1,17 +1,20 @@
 var DataStructure = (function(){
-    var scanSymbol = Symbol("scan");
     /*
         full example structure of type:
         {
-            name: "Field Name",         //name of field if field of object
-            type: "object",             //type of variable (either string or clas)
-            fields: [type],             //the fields that an object should have if the type is object (recursive structure)
-            childType: type,            //the type that any field not defined in fields may have (recursive structure)
-            default: {},                //the default value if the value is left out
-            validate: function(val){},  //a validation function that should return an error string if val is invalid
-            init: function(val, path){} //a function to initialise allowed data to a single type if needed
+            name: "Field Name",              //name of field if field of object
+            type: "object",                  //type of variable (either string or clas)
+            fields: [type],                  //the fields that an object should have if the type is object (recursive structure)
+            childType: type,                 //the type that any field not defined in fields may have (recursive structure)
+            default: {},                     //the default value if the value is left out
+            validate: function(val, path){}, //a validation function that should return an error string if val is invalid
+            init: function(val, path){}      //a function to initialise allowed data to a single type if needed
         }
     */
+    var scanSymbol = Symbol("scan");
+    var CustomError = function(text){
+        this.text = text;
+    };
     var DataStructure = function(type, parentType){
         this.type = type;
     };
@@ -19,8 +22,9 @@ var DataStructure = (function(){
     pt.validate = function(data, initContext, type, dontInitBaseObj){
         var structureMatch = this.matchStructure(data, type);
         if(structureMatch.misMatches){
-            //method to remove count number from mismatches
-            var removeMisMatchCount = function(obj){
+            //method to remove count number from mismatches and get the text from custom errors
+            var cleanError = function(obj){
+                if(obj instanceof CustomError) return obj.text; //extract the text from the custom error
                 delete obj.misMatchCount; //remove number
                 
                 var keys = Object.keys(obj); //get children of object
@@ -28,14 +32,15 @@ var DataStructure = (function(){
                     var key = keys[i];
                     var val = obj[key];
                     if(val instanceof Object) //if child is an object, remove numbers from that
-                        removeMisMatchCount(val);
+                        obj[key] = cleanError(val);
                 }
+                return obj;
             };
             
-            //remove count numbers from mismatches
+            //remove count numbers from mismatches and get message from custom errors
             var misMatches = structureMatch.misMatches;
-            removeMisMatchCount(misMatches);
-            
+            misMatches = cleanError(misMatches);
+
             if(typeof(misMatches)=="string") //if the message is simply a string, throw this dirrectly
                 throw Error("argument "+misMatches);
             
@@ -67,7 +72,7 @@ var DataStructure = (function(){
                         return init.call(initContext, obj, path);
                     return obj;
                 };
-                initObj(data, init, "self", dontInitBaseObj);
+                data = initObj(data, init, "self", dontInitBaseObj);
             }
             return data;
         }
@@ -81,24 +86,25 @@ var DataStructure = (function(){
             }
         }
     };
-    pt.matchStructure = function(data, type){
+    pt.matchStructure = function(data, type, path){
         if(!type) type = this.type;
+        if(!path) path = "root";
         
         if(type.type){ //if type is an object with data like: name, type, fields, default, validate, childType
-            var structureMatch = this.matchStructure(data, type.type); //match type
+            var structureMatch = this.matchStructure(data, type.type, path); //match type
             copyStructure(structureMatch.structure, type); //copy all the structure of type into structure
             if(type.default!==undefined && data==undefined){  //if a default value is defined, indicate that this should be instantiated
                 delete structureMatch.misMatches;
                 structureMatch.init = type.default;
             }
             if(!structureMatch.misMatches && type.validate){ //if data is still valid, check the validate function if provided
-                var result = type.validate(data);
-                if(result) structureMatch.misMatches = result; //set the mismatch message if provided
+                var result = type.validate.call(data, data, path);
+                if(result) structureMatch.misMatches = new CustomError(result); //set the mismatch message if provided
             } 
             if(structureMatch.misMatches || structureMatch.init!==undefined) return structureMatch; //if the structure is invalid at this point, or we know it must be initialised to the defualt value, return the structure data
             
             //if the structure is still valid, check if the child structure is also valid
-            if(typeof(data)=="object"){
+            if(typeof(data)=="object" && type.type && (type.type.__proto__==Object.prototype || typeof(type.type)=="string")){
                 structureMatch.structure.fields = {}; //the fields to store the child structure in
             
                 var misMatchObj = {}; //the object to store the child mismatches in (we already know that this data itself doesn't mismatch)
@@ -113,7 +119,7 @@ var DataStructure = (function(){
                         return;
                         
                     //check the specific field's structure
-                    var childStructureMatch = This.matchStructure(fieldValue, field);
+                    var childStructureMatch = This.matchStructure(fieldValue, field, path+"."+(fieldName||field.name));
                     if(childStructureMatch.misMatches){ //if there are mismatches, store these
                         var misMatches = childStructureMatch.misMatches;
                         misMatchObj[fieldName||field.name] = misMatches;
@@ -192,7 +198,7 @@ var DataStructure = (function(){
                 type = types[i];
                 
                 //check the structure
-                var structureMatch = this.matchStructure(data, type);
+                var structureMatch = this.matchStructure(data, type, path);
                 var misMatches = structureMatch.misMatches;
                 if(!misMatches) return structureMatch; //accept the result if there are no misMatches
                 
