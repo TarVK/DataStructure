@@ -1,4 +1,5 @@
 var DataStructure = (function(){
+    var scanSymbol = Symbol("scan");
     /*
         full example structure of type:
         {
@@ -12,12 +13,7 @@ var DataStructure = (function(){
         }
     */
     var DataStructure = function(type, parentType){
-        if(parentType){
-            var eType = parentType.type?parentType.type:parentType;
-            this.type = Utils.object.extend(eType, type, true, true);
-        }else{
-            this.type = Utils.object.attachCopyTracker(type);
-        }
+        this.type = type;
     };
     var pt = DataStructure.prototype;
     pt.validate = function(data, initContext, type, dontInitBaseObj){
@@ -113,7 +109,7 @@ var DataStructure = (function(){
                 //the function to test a specific field and store its result as a part of this field
                 var This = this;
                 var scanField = function(field, fieldValue, fieldName){
-                    if(fieldValue instanceof Object && fieldValue[Utils.symbols.scan]!==undefined)
+                    if(fieldValue instanceof Object && fieldValue[scanSymbol]!==undefined)
                         return;
                         
                     //check the specific field's structure
@@ -133,7 +129,7 @@ var DataStructure = (function(){
                     structureMatch.structure.fields[field.name] = childStructureMatch.structure;
                 };
                 
-                data[Utils.symbols.scan] = true;
+                data[scanSymbol] = true;
                 //test specific fields if defined
                 if(type.fields){
                     for(var i=0; i<type.fields.length; i++){
@@ -161,7 +157,7 @@ var DataStructure = (function(){
                         misMatchCount += 1;
                     }
                 }
-                delete data[Utils.symbols.scan];
+                delete data[scanSymbol];
                 
                 //only add mistMatch and init fields to result if needed
                 if(misMatchCount>0){
