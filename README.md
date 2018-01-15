@@ -112,20 +112,20 @@ ds.validate({
 	obj: {
 		text: "text",
 		someRandomFieldName: 3
-    }
+    	}
 });
 ds.validate({
 	test: "text",
 	obj: {
 		bool: true
-    }
+    	}
 });
 ds.validate({
 	test: true,
 	obj: {
 		bool: false,
 		someRandomFieldName: 6
-    }
+	}
 });
 ```
 All but the last validations will pass. The last validation will throw the following error:
@@ -157,10 +157,10 @@ var type = {
 		var dim = path.split(".").length-1; //extract the dimension from the path
 		if(sizeArray[dim]==null){ //initialise the dimension size
 			sizeArray[dim] = data.length;
-        }else if(sizeArray[dim]!=data.length){ //verify the dimension size
+        	}else if(sizeArray[dim]!=data.length){ //verify the dimension size
 			return "Should be of size "+sizeArray[dim];
-        }
-    }
+        	}
+    	}
 };
 type.childType.push(type);
 var ds = new DataStructure(type);
@@ -172,20 +172,20 @@ var validateMatrix = function(data){
 
 //validation examples
 validateMatrix([[1,2,3],
-				[1,2,3],
-				[1,2,3]]); //2 dimensional matrix
+		[1,2,3],
+		[1,2,3]]); //2 dimensional matrix
 validateMatrix([[[1,2,3],
-				 [1,2,3],
-				 [1,2,3]],
-				[[1,2,3],
-				 [1,2,3],
-				 [1,2,3]]]); //3 dimensional matrix
+		 [1,2,3],
+		 [1,2,3]],
+		[[1,2,3],
+		 [1,2,3],
+		 [1,2,3]]]); //3 dimensional matrix
 validateMatrix([[[1,2,3],
-				 [1,2,3],
-				 [1,2,3]],
-				[[1,2,3],
-				 [1,2],
-				 [1,2,3]]]); //3 malformed dimensional matrix
+		 [1,2,3],
+		 [1,2,3]],
+		[[1,2,3],
+		 [1,2],
+		 [1,2,3]]]); //3 malformed dimensional matrix
 ```
 All but the last validations will pass. The last validation will throw the following error:
 ![Structure feedback](Error%20images/DataStructure%20error%203.png "Structure feedback")
@@ -217,14 +217,14 @@ Only the last validation won't pass, it will throw the following error:
 //setup
 var ds = new DataStructure({
 	type: "object",
-    fields: [{
+    	fields: [{
 		name: "required",
 		type: "number"
 	},{
 		name: "nonRequired",
 		type: "number",
-        default: 5
-    }]
+        	default: 5
+	}]
 });
 
 //validation example
@@ -233,10 +233,10 @@ var result = ds.validate({
 });
 /*
 	the result variable will now look like this:
-    {
+    	{
 		nonRequired: 5,
 		required: 4
-    }
+    	}
 */
 ```
 ### Initialisation
@@ -246,7 +246,7 @@ var dsNumber = new DataStructure({
 	type: "number",
 	init: function(data, field){
 		return data+1;
-    }
+   	}
 });
 var dsObject = new DataStructure({
 	type: "object",
@@ -254,8 +254,8 @@ var dsObject = new DataStructure({
 		name: "val",
 		type: "number",
 		init: function(data, field){
-            return data+1;
-        }
+ 			return data+1;
+        	}
 	}]	
 });
 
@@ -264,10 +264,10 @@ var number = dsNumber.validate(5);
 var object = dsObject.validate({val:5});
 /*
 	the number variable will now have the value 6,
-    the object variable will now look like this:
-    {
+    	the object variable will now look like this:
+ 	{
 		val: 6
-    }
+	}
 */
 ```
 ### Type Conversion Using Initialisation
@@ -283,7 +283,7 @@ var ds = new DataStructure({
 	init: function(data){
 		if(typeof(data)=="number") return data==1;
 		return data;
-    }
+	}
 });
 
 //validation example
@@ -292,7 +292,7 @@ var bool2 = ds.validate(true);
 var bool3 = ds.validate(5);
 /*
 	the bool1 variable will now have the value false,
-    the bool2 variable will now have the value true
+	the bool2 variable will now have the value true
 */
 ```
 All but the last validations will pass. The last validation will throw the following error:
