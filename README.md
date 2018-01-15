@@ -34,7 +34,7 @@ var ds = new DataStructure({
 });
 ```
 ### Validation
-Once a DataStructure object has been created, the validate method can be called in order to check whether a variable conforms to the specified type. If it doesn't an error with feedback will be thrown.
+Once a DataStructure object has been created, the validate method can be called in order to check whether a variable conforms to the specified type. If it doesn't, an error with feedback will be thrown.
 
 Example:
 ```js
