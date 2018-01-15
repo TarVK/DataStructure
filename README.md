@@ -127,7 +127,7 @@ ds.validate({
 });
 ```
 All but the last validations will pass. The last validation will throw the following error:
-![Structure feedback](Error%20images/DataStrucure%20error%201.png "Structure feedback")
+![Structure feedback](Error%20images/DataStructure%20error%201.png "Structure feedback")
 
 ### Recursive Array Of Numbers
 ```js
@@ -144,7 +144,7 @@ ds.validate([1,2,3,[4,5,[6,7],8],[9]]);
 ds.validate([1,2,3,[4,5,[6,"7"],8],[9]]);
 ```
 Only the last validation won't pass, it will throw the following error:
-![Structure feedback](Error%20images/DataStrucure%20error%202.png "Structure feedback")
+![Structure feedback](Error%20images/DataStructure%20error%202.png "Structure feedback")
 ### N-dimensional Matrix
 ```js
 var sizeArray = []; //an array to store the dimension sizes of an matrix being scanned
@@ -186,7 +186,7 @@ validateMatrix([[[1,2,3],
 				 [1,2,3]]]); //3 malformed dimensional matrix
 ```
 All but the last validations will pass. The last validation will throw the following error:
-![Structure feedback](Error%20images/DataStrucure%20error%203.png "Structure feedback")
+![Structure feedback](Error%20images/DataStructure%20error%203.png "Structure feedback")
 
 ### Infinite Recursion
 DataStructure can also handle objects that contain infinite recursion without problems.
@@ -209,7 +209,7 @@ data[0].push(data);
 ds.validate(data);
 ```
 Only the last validation won't pass, it will throw the following error:
-![Structure feedback](Error%20images/DataStrucure%20error%204.png "Structure feedback")
+![Structure feedback](Error%20images/DataStructure%20error%204.png "Structure feedback")
 ### Default Values
 ```js
 //setup
@@ -294,7 +294,7 @@ var bool3 = ds.validate(5);
 */
 ```
 All but the last validations will pass. The last validation will throw the following error:
-![Structure feedback](Error%20images/DataStrucure%20error%205.png "Structure feedback")
+![Structure feedback](Error%20images/DataStructure%20error%205.png "Structure feedback")
 ### Class types
 ```js
 //setup
@@ -314,4 +314,4 @@ ds.validate({field: new SomeClass(3)});
 ds.validate({field: 3});
 ```
 Only the last validation won't pass, it will throw the following error:
-![Structure feedback](Error%20images/DataStrucure%20error%206.png "Structure feedback")
+![Structure feedback](Error%20images/DataStructure%20error%206.png "Structure feedback")
